@@ -12,7 +12,7 @@ export interface IProduct extends Document {
   totalSoldQty: number;
 }
 
-const ProductSchema = new Schema<IProduct>({
+const Product = new Schema<IProduct>({
   productName: {
     type: String,
     required: true,
@@ -47,4 +47,4 @@ const ProductSchema = new Schema<IProduct>({
   },
 });
 
-export const UserModel = model<IProduct>("ProductSchema", ProductSchema);
+export const ProductSchema = model<IProduct>("Product", Product);
