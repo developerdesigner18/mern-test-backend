@@ -2,6 +2,7 @@ import express from "express";
 import dbConnection from "./dbConnector";
 const bodyParser = require("body-parser");
 const cors = require("cors");
+import apiRoutes from "./routes";
 
 const app = express();
 const port = 5000;
@@ -12,9 +13,7 @@ require("dotenv").config();
 dbConnection();
 app.use(express.json());
 
-app.get("/", (_, res) => {
-  res.status(200).send(`OK`);
-});
+app.use("/", apiRoutes);
 
 app.use(bodyParser.json({ limit: "50mb" })); // Increase the limit to allow larger payloads
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
