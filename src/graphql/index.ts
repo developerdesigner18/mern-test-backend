@@ -13,8 +13,8 @@ type pieChart {
 }
 
 type country {
-    countryName: String,
-    number: Int
+    id: String,
+    value: Int
 }
 
 type heatMap {
@@ -64,14 +64,14 @@ const resolvers ={
             let category:any = [];
             
             data.forEach((element:any) => {
-              const existingCategory = category.find((re:any) => re.countryName === element.country);
+              const existingCategory = category.find((re: any) => re.id === element.country);
             
               if (existingCategory) {
-                existingCategory.number += 1;
+                existingCategory.value += 1;
               } else {
                 category.push({
-                  countryName: element.country,
-                  number: 1,
+                  id: element.country,
+                  value: 1,
                 });
               }
             });
