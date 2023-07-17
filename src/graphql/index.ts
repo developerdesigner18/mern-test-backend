@@ -21,9 +21,17 @@ type heatMap {
     country:[country]
 }
 
+type ageCount{
+    teen:String,
+    adult:String,
+    senior:String
+}
+
+
 type Query{
     getPieChartData: pieChart!
     getHeatMapData: heatMap!
+    getAgeCountData: ageCount!
 }
 
 `;
@@ -70,6 +78,26 @@ const resolvers ={
             return { country: category };
             
         },
+        getAgeCountData:async (_: any) => {
+            const data = await user.find()
+            const ageCount = {
+                teen:0,
+                adult:0,
+                senior:0
+            }
+            data.forEach((element:any) => {
+                if(element.userAge>=13&&element.userAge<=19){
+                    ageCount.teen++
+                }
+                else if(element.userAge>19&&element.userAge<=34){
+                    ageCount.adult++
+                }
+                else if(element.userAge>34){
+                    ageCount.senior++
+                }
+            });
+            return ageCount
+        }
     }
 }
 
