@@ -27,11 +27,16 @@ type ageCount{
     senior:String
 }
 
+type occupation{
+    occupationName:String,
+    number:Int
+}
 
 type Query{
     getPieChartData: pieChart!
     getHeatMapData: heatMap!
     getAgeCountData: ageCount!
+    getOccupationData: [occupation]!
 }
 
 `;
@@ -97,7 +102,26 @@ const resolvers ={
                 }
             });
             return ageCount
-        }
+        },
+        getOccupationData:async (_: any) => {
+            const data = await user.find();
+            let category:any = [];
+            
+            data.forEach((element:any) => {
+              const existingCategory = category.find((re: any) => re.occupationName === element.occupation);
+            
+              if (existingCategory) {
+                existingCategory.number += 1;
+              } else {
+                category.push({
+                  occupationName: element.occupation,
+                  number: 1,
+                });
+              }
+            });
+            return category
+            
+        },
     }
 }
 
