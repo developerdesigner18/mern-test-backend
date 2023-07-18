@@ -31,11 +31,31 @@ const typeDefs = gql`
     number: Int
   }
 
+  type gender {
+    male: Int
+    female: Int
+    other: Int
+  }
+
+  type salesVSTarget {
+    totalSellProduct: Int
+    expectedSellProduct: Int
+    productName: String
+  }
+
+  type top10Products {
+    totalSoldQty: Int
+    productName: String
+  }
+
   type Query {
     getPieChartData: pieChart!
     getHeatMapData: heatMap!
     getAgeCountData: ageCount!
     getOccupationData: [occupation]!
+    getGenderData: gender!
+    getSalesVSTargetData: [salesVSTarget]!
+    getTop10Products: [top10Products]!
   }
 `;
 
@@ -119,6 +139,30 @@ const resolvers = {
       });
       return category;
     },
+
+
+    getGenderData: async (_: any) => {
+      const data = await user.find()
+      return { male: data.filter((e: any) => e.gender === 'Male').length, female: data.filter((e: any) => e.gender === 'Female').length, other: data.filter((e: any) => e.gender === 'Other').length }
+    },
+
+    getSalesVSTargetData: async (_: any) => {
+      const data = await product.find()
+      let returnData: any = [];
+      data.forEach((e: any) => {
+        returnData.push({ expectedSellProduct: e.productExpectedSale, totalSellProduct: e.totalSoldQty, productName: e.productName })
+      });
+      console.log(returnData);
+
+      return returnData
+    },
+
+    getTop10Products: async (_: any) => {
+      const data = await product.find()
+      const sortedProducts = data.sort((a: any, b: any) => b.totalSoldQty - a.totalSoldQty)
+
+      return sortedProducts.map((e: any) => { return { totalSoldQty: e.totalSoldQty, productName: e.productName } })
+    }
   },
 };
 
