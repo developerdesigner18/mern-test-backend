@@ -5,6 +5,7 @@ export interface IUser extends Document {
   userEmail: string;
   userAge: number;
   country: string;
+  countryCode: string;
   gender: string;
   occupation: string;
 }
@@ -23,6 +24,10 @@ const User = new Schema<IUser>({
     required: true,
   },
   country: {
+    type: String,
+    required: true,
+  },
+  countryCode: {
     type: String,
     required: true,
   },
