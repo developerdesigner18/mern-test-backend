@@ -174,18 +174,34 @@ const resolvers = {
       return sortedProducts.map((e: any) => { return { totalSoldQty: e.totalSoldQty, productName: e.productName } })
     },
     getRevenueAnalysisData: async (_: any) => {
-      const data = await order.find().populate({path:"productID"})
-      console.log(data[0].productID, "Data=================");
-      let Analysis:any = []
-      data.forEach((e: any) => {
-        Analysis.push({
-          revenue:e.quantity* e.productID.productPrice,
-          cost: e.productID.cost * e.quantity,
-          profit:(e.quantity* e.productID.productPrice)-(e.quantity* e.productID.cost),
-          month: new Date(e.purchaseDate).getMonth(),
-          productName: e.productID.productName
-        })
-      })
+      const data = await order.find().populate({ path: "productID" })
+
+      let Analysis: any = []
+      data.forEach((element: any) => {
+
+        const existingCategory = Analysis.find(
+          (re: any) => re.month === new Date(element.purchaseDate).getMonth()
+        );
+
+        if (existingCategory) {
+
+
+          existingCategory.cost += element.productID.cost * element.quantity;
+          existingCategory.revenue += element.productID.productPrice * element.quantity;
+          existingCategory.profit += element.productID.productPrice * element.quantity - (element.productID.cost * element.quantity);
+        } else {
+
+
+          Analysis.push({
+            revenue: element.productID.productPrice * element.quantity,
+            cost: element.productID.cost * element.quantity,
+            profit: element.productID.productPrice * element.quantity - (element.productID.cost * element.quantity),
+            month: new Date(element.purchaseDate).getMonth(),
+          });
+
+        }
+      });
+
       return Analysis
     }
   },
