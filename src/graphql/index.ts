@@ -53,7 +53,8 @@ const typeDefs = gql`
     revenue:Int,
     cost:Int,
     profit:Int,
-    month:Int
+    month:Int,
+    productName:String
   }
 
   type Query {
@@ -174,14 +175,15 @@ const resolvers = {
     },
     getRevenueAnalysisData: async (_: any) => {
       const data = await order.find().populate({path:"productID"})
-      // console.log(data[0].productID.cost,"Data=================");
+      console.log(data[0].productID, "Data=================");
       let Analysis:any = []
       data.forEach((e: any) => {
         Analysis.push({
           revenue:e.quantity* e.productID.productPrice,
-          cost:e.productID.cost,
+          cost: e.productID.cost * e.quantity,
           profit:(e.quantity* e.productID.productPrice)-(e.quantity* e.productID.cost),
-          month:new Date(e.purchaseDate).getMonth()
+          month: new Date(e.purchaseDate).getMonth(),
+          productName: e.productID.productName
         })
       })
       return Analysis
