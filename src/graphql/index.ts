@@ -174,16 +174,33 @@ const resolvers = {
     },
     getRevenueAnalysisData: async (_: any) => {
       const data = await order.find().populate({path:"productID"})
-      // console.log(data[0].productID.cost,"Data=================");
+      
       let Analysis:any = []
-      data.forEach((e: any) => {
-        Analysis.push({
-          revenue:e.quantity* e.productID.productPrice,
-          cost:e.productID.cost,
-          profit:(e.quantity* e.productID.productPrice)-(e.quantity* e.productID.cost),
-          month:new Date(e.purchaseDate).getMonth()
-        })
-      })
+      data.forEach((element: any) => {
+        
+        const existingCategory = Analysis.find(
+          (re: any) => re.month === new Date(element.purchaseDate).getMonth()
+        );
+          
+        if (existingCategory) {
+          
+
+          existingCategory.cost += element.productID.cost*element.quantity;
+          existingCategory.revenue += element.productID.productPrice * element.quantity;
+          existingCategory.profit += element.productID.productPrice * element.quantity - (element.productID.cost*element.quantity);
+        } else {
+          
+          
+          Analysis.push({
+            revenue:element.productID.productPrice * element.quantity,
+            cost:element.productID.cost*element.quantity,
+            profit:element.productID.productPrice * element.quantity - (element.productID.cost*element.quantity),
+            month:new Date(element.purchaseDate).getMonth(),
+          });
+          
+        }
+      });
+      
       return Analysis
     }
   },
