@@ -10,6 +10,7 @@ export interface IProduct extends Document {
   productExpectedSale: number;
   productPrice: number;
   totalSoldQty: number;
+  cost:number;
 }
 
 const Product = new Schema<IProduct>({
@@ -45,6 +46,9 @@ const Product = new Schema<IProduct>({
     type: Number,
     required: true,
   },
+  cost:{
+    type:Number,
+  }
 });
 
 module.exports = model("Product", Product);

@@ -1,6 +1,7 @@
 const { gql } = require("apollo-server");
 const user = require("../models/user.model");
 const product = require("../models/product.model");
+const order = require('../models/order.model')
 const typeDefs = gql`
   type category {
     categoryName: String
@@ -48,6 +49,13 @@ const typeDefs = gql`
     productName: String
   }
 
+  type revenueAnalysis{
+    revenue:Int,
+    cost:Int,
+    profit:Int,
+    month:Int
+  }
+
   type Query {
     getPieChartData: pieChart!
     getHeatMapData: heatMap!
@@ -56,6 +64,7 @@ const typeDefs = gql`
     getGenderData: gender!
     getSalesVSTargetData: [salesVSTarget]!
     getTop10Products: [top10Products]!
+    getRevenueAnalysisData: [revenueAnalysis]!
   }
 `;
 
@@ -162,6 +171,20 @@ const resolvers = {
       const sortedProducts = data.sort((a: any, b: any) => b.totalSoldQty - a.totalSoldQty)
 
       return sortedProducts.map((e: any) => { return { totalSoldQty: e.totalSoldQty, productName: e.productName } })
+    },
+    getRevenueAnalysisData: async (_: any) => {
+      const data = await order.find().populate({path:"productID"})
+      // console.log(data[0].productID.cost,"Data=================");
+      let Analysis:any = []
+      data.forEach((e: any) => {
+        Analysis.push({
+          revenue:e.quantity* e.productID.productPrice,
+          cost:e.productID.cost,
+          profit:(e.quantity* e.productID.productPrice)-(e.quantity* e.productID.cost),
+          month:new Date(e.purchaseDate).getMonth()
+        })
+      })
+      return Analysis
     }
   },
 };
